@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astronomy Picture of the Day</title>
+    <!-- Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="stars"></div> <!-- subtle background effect -->
+    <div class="container">
+        <h1>✨ Astronomy Picture of the Day ✨</h1>
+        <button id="fetch-btn" class="fetch-btn">View Today's APOD</button>
+        
+        <!-- Loading indicator -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Fetching the cosmos...</p>
+        </div>
+
+        <div id="apod-container" class="apod-container hidden">
+            <img id="apod-image" src="" alt="APOD">
+            <h2 id="apod-title"></h2>
+            <p id="apod-credit"></p>
+            <p id="apod-description"></p>
+        </div>
+        
+        <p id="error-message" class="error hidden"></p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
