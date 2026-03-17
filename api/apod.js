@@ -1,22 +1,36 @@
 const NASA_API_URL = 'https://api.nasa.gov/planetary/apod';
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 jam
+// Refresh setiap jam 10 pagi WIB = 03:00 UTC
+const CACHE_HOUR_UTC = 3;
 
 let cachedData = null;
-let cacheTimestamp = null;
+let cacheDate = null; // format YYYY-MM-DD
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     try {
-        const now = Date.now();
+        const now = new Date();
+        const nowUtc = new Date(now.toISOString());
+        const todayStr = nowUtc.toISOString().split('T')[0];
+
+        const currentHourUtc = nowUtc.getUTCHours();
+        let targetDate;
+        if (currentHourUtc >= CACHE_HOUR_UTC) {
+            targetDate = todayStr;
+        } else {
+            const yesterday = new Date(nowUtc);
+            yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+            targetDate = yesterday.toISOString().split('T')[0];
+        }
+
         let source = '';
 
-        if (cachedData && cacheTimestamp && (now - cacheTimestamp < CACHE_DURATION)) {
+        if (cachedData && cacheDate === targetDate) {
             source = 'cache';
-            console.log('Serving from cache');
+            console.log(`Serving from cache for date ${targetDate}`);
         } else {
             source = 'NASA API';
-            console.log('Fetching from NASA API');
+            console.log(`Fetching from NASA API for target date ${targetDate}`);
 
             const apiKey = process.env.NASA_API_KEY;
             if (!apiKey) {
@@ -44,7 +58,7 @@ export default async function handler(req, res) {
                 date: nasaData.date,
             };
 
-            cacheTimestamp = now;
+            cacheDate = targetDate;
         }
 
         const responseData = {
